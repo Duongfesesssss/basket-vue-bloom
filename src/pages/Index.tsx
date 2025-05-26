@@ -2,11 +2,14 @@
 import React, { useState } from 'react';
 import CartItem, { CartItemData } from '@/components/CartItem';
 import CartSummary from '@/components/CartSummary';
+import ProductDetail from '@/components/ProductDetail';
 import { ShoppingCart, Package } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 const Index = () => {
   const { toast } = useToast();
+  const [selectedProduct, setSelectedProduct] = useState<CartItemData | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   
   const [cartItems, setCartItems] = useState<CartItemData[]>([
     {
@@ -65,6 +68,16 @@ const Index = () => {
     });
   };
 
+  const handleShowDetail = (item: CartItemData) => {
+    setSelectedProduct(item);
+    setIsDetailOpen(true);
+  };
+
+  const handleCloseDetail = () => {
+    setIsDetailOpen(false);
+    setSelectedProduct(null);
+  };
+
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   const shipping = subtotal > 500000 ? 0 : 30000;
   const tax = Math.round(subtotal * 0.1);
@@ -103,6 +116,7 @@ const Index = () => {
                   item={item}
                   onUpdateQuantity={handleUpdateQuantity}
                   onRemove={handleRemoveItem}
+                  onShowDetail={handleShowDetail}
                 />
               ))}
             </div>
@@ -120,6 +134,13 @@ const Index = () => {
           </div>
         )}
       </div>
+
+      {/* Product Detail Modal */}
+      <ProductDetail
+        product={selectedProduct}
+        isOpen={isDetailOpen}
+        onClose={handleCloseDetail}
+      />
     </div>
   );
 };
