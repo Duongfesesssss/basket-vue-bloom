@@ -10,13 +10,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ShoppingCart, Menu, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '@/context/CartContext';
 
-interface NavbarProps {
-  cartItemCount: number;
-}
-
-const Navbar = ({ cartItemCount }: NavbarProps) => {
+const Navbar = () => {
   const navigate = useNavigate();
+  const { cartItemCount } = useCart();
 
   const categories = [
     'Điện thoại',

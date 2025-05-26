@@ -1,13 +1,13 @@
-
-import React, { useState } from 'react';
+import React from 'react';
 import Navbar from '@/components/Navbar';
 import ProductCard from '@/components/ProductCard';
 import { CartItemData } from '@/components/CartItem';
+import { useCart } from '@/context/CartContext';
 import { useToast } from '@/hooks/use-toast';
 
 const Home = () => {
   const { toast } = useToast();
-  const [cartItems, setCartItems] = useState<CartItemData[]>([]);
+  const { addToCart, cartItemCount } = useCart();
 
   const products: Omit<CartItemData, 'quantity'>[] = [
     {
@@ -69,29 +69,12 @@ const Home = () => {
   ];
 
   const handleAddToCart = (product: Omit<CartItemData, 'quantity'>) => {
-    setCartItems(prev => {
-      const existingItem = prev.find(item => item.id === product.id);
-      if (existingItem) {
-        toast({
-          title: "Đã cập nhật giỏ hàng",
-          description: `Tăng số lượng ${product.name}`,
-        });
-        return prev.map(item =>
-          item.id === product.id 
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      } else {
-        toast({
-          title: "Đã thêm vào giỏ hàng",
-          description: `${product.name} đã được thêm vào giỏ hàng`,
-        });
-        return [...prev, { ...product, quantity: 1 }];
-      }
+    addToCart(product);
+    toast({
+      title: "Đã thêm vào giỏ hàng",
+      description: `${product.name} đã được thêm vào giỏ hàng`,
     });
   };
-
-  const cartItemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">

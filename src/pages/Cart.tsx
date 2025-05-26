@@ -8,38 +8,17 @@ import { Package, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '@/context/CartContext';
 
 const Cart = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { cartItems, updateQuantity, removeItem, cartItemCount } = useCart();
   const [selectedProduct, setSelectedProduct] = useState<CartItemData | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
-  
-  const [cartItems, setCartItems] = useState<CartItemData[]>([
-    {
-      id: '1',
-      name: 'iPhone 15 Pro Max',
-      price: 29990000,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=400&h=400&fit=crop',
-      description: '256GB, Titan Tự Nhiên'
-    },
-    {
-      id: '2',
-      name: 'MacBook Air M3',
-      price: 27990000,
-      quantity: 1,
-      image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&h=400&fit=crop',
-      description: '13 inch, 8GB RAM, 256GB SSD'
-    }
-  ]);
 
   const handleUpdateQuantity = (id: string, quantity: number) => {
-    setCartItems(prev => 
-      prev.map(item => 
-        item.id === id ? { ...item, quantity } : item
-      )
-    );
+    updateQuantity(id, quantity);
     toast({
       title: "Đã cập nhật giỏ hàng",
       description: "Số lượng sản phẩm đã được thay đổi.",
@@ -48,7 +27,7 @@ const Cart = () => {
 
   const handleRemoveItem = (id: string) => {
     const item = cartItems.find(item => item.id === id);
-    setCartItems(prev => prev.filter(item => item.id !== id));
+    removeItem(id);
     toast({
       title: "Đã xóa sản phẩm",
       description: `${item?.name} đã được xóa khỏi giỏ hàng.`,
@@ -74,11 +53,10 @@ const Cart = () => {
   const shipping = subtotal > 500000 ? 0 : 30000;
   const tax = Math.round(subtotal * 0.1);
   const total = subtotal + shipping + tax;
-  const itemCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar cartItemCount={itemCount} />
+      <Navbar cartItemCount={cartItemCount} />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Back Button */}
@@ -95,7 +73,7 @@ const Cart = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Giỏ hàng của bạn</h1>
           <span className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full">
-            {itemCount} sản phẩm
+            {cartItemCount} sản phẩm
           </span>
         </div>
 
@@ -130,7 +108,7 @@ const Cart = () => {
                 shipping={shipping}
                 tax={tax}
                 total={total}
-                itemCount={itemCount}
+                itemCount={cartItemCount}
               />
             </div>
           </div>

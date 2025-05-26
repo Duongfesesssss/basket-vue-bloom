@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { CreditCard, ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface CartSummaryProps {
   subtotal: number;
@@ -13,6 +14,16 @@ interface CartSummaryProps {
 }
 
 const CartSummary = ({ subtotal, shipping, tax, total, itemCount }: CartSummaryProps) => {
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    navigate('/checkout');
+  };
+
+  const handleContinueShopping = () => {
+    navigate('/');
+  };
+
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-6">
       <div className="flex items-center space-x-2 mb-6">
@@ -45,12 +56,19 @@ const CartSummary = ({ subtotal, shipping, tax, total, itemCount }: CartSummaryP
       </div>
 
       <div className="mt-6 space-y-3">
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold">
+        <Button 
+          onClick={handleCheckout}
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+        >
           <CreditCard className="mr-2 h-5 w-5" />
           Thanh toán ngay
         </Button>
         
-        <Button variant="outline" className="w-full py-3 text-lg font-semibold">
+        <Button 
+          variant="outline" 
+          onClick={handleContinueShopping}
+          className="w-full py-3 text-lg font-semibold"
+        >
           Tiếp tục mua sắm
         </Button>
       </div>
